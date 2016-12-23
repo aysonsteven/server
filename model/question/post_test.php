@@ -15,10 +15,10 @@ class post_test {
      * @param $idx
      * @return string
      */
-    private function get($idx) {
+    private function get($id) {
         $rest = [
             'mc'=>'post.get',
-            'idx' => $idx,
+            'id' => $id,
             'fields'=>'*'
         ];
         return http_test( $rest );

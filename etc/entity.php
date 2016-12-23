@@ -59,24 +59,24 @@ class Entity {
     public function get( $idx = null, $fields = '*', $field = null ) {
         $restful = false;
         if ( $idx === null ) { /// @attention if $idx is null, then it is Restful Query
-            $idx = in('idx') ? in('idx') : in('id');
+            $idx = in('id') ? in('id') : in('id');
             if ( $idx ) {
                 $restful = true;
                 $fields = in('fields', '*');
             }
             else {
                 print_r($_REQUEST);
-                json_error(-40430, 'input-id-or-idx');
+                json_error(-40430, 'input-id-or-id');
             }
         }
         if ( $field !== null ) {            /// @ATTENTION $field can be set only programmatically
             $id = db()->escape( $idx );
             $row = db()->get_row( "SELECT $fields FROM {$this->table} WHERE $field='$id'", ARRAY_A);
         }
-        else if ( is_numeric( $idx ) ) $row = db()->get_row( "SELECT $fields FROM {$this->table} WHERE idx=$idx", ARRAY_A);
+        else if ( is_numeric( $idx ) ) $row = db()->get_row( "SELECT $fields FROM {$this->table} WHERE id=$idx", ARRAY_A);
         else {
             $id = db()->escape( $idx );
-            $row = db()->get_row( "SELECT $fields FROM {$this->table} WHERE id='$id'", ARRAY_A);
+            $row = db()->get_row( "SELECT $fields FROM {$this->table} WHERE id='$idx'", ARRAY_A);
         }
         // db()->vardump();
         if ( $restful ) {

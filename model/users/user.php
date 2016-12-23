@@ -255,7 +255,7 @@ class User extends Entity {
         $user = $this->get( $id );
         if ( empty($user) ) return error(-20070, 'user-not-exist');
         if ( $user['password'] != encrypt_password( $password ) ) return error( -20071, 'wrong-password');
-        return get_session_id( $user['idx'] );
+        return get_session_id( $user['id'] );
     }
 
     /**

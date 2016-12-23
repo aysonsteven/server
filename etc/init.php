@@ -21,7 +21,7 @@ if ( in('session_id') ) {
     if ( empty($idx_user) || empty($token) ) json_error( -40093, 'session-id-malformed');
     $_user = user()->get( $idx_user );
     if ( empty($_user) ) json_error( -40091, "user-not-exist-by-that-session-id");
-    $_session_id = get_session_id( $_user['idx'] );
+    $_session_id = get_session_id( $_user['id'] );
     if ( $_session_id == in('session_id') ) { // Login OK.
         $_current_user = $_user;
     }

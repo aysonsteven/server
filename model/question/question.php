@@ -1,6 +1,6 @@
 <?php
 
-class post extends Entity {
+class question extends Entity {
 
 
     public function __construct()
@@ -34,7 +34,7 @@ class post extends Entity {
      *
      */
     public function permission() {
-        $post = $this->get( in('idx') );
+        $post = $this->get( in('id') );
         json( $this->checkPermission( $post, in('password')) );
     }
 
@@ -56,9 +56,9 @@ class post extends Entity {
         $data['user_id'] = my('id');
         $data['created'] = time();
         $data['updated'] = time();
-        $idx = db()->insert('questions', $data);
+        $id = db()->insert('questions', $data);
 
-        if ( $idx ) return $idx;
+        if ( $id ) return $id;
         else return error(-40100, 'failed-to-post-create');
     }
 
@@ -100,15 +100,15 @@ class post extends Entity {
      * 2. login user id match.
      */
     private function checkPermission( $post, $password ) {
-	if ( empty($post) ) return error( -40568, 'post-not-exist' );
-	$password = encrypt_password( $password );
-        if ( isset( $password ) && $password ) {
-            if ( $password == $post['password'] ) return false; // success. permission granted.
-            else return error( -40564, 'wrong-password' );
-        }
-        else if ( $post['user_id'] == 'anonymous' ) return error( -40565, 'login-or-input-password' );
-        else if ( $post['user_id'] != my('id') ) return error( -40567, 'not-your-post' );
-        return false; // success. this is your post. permission granted.
+	// if ( empty($post) ) return error( -40568, 'post-not-exist' );
+	// $password = encrypt_password( $password );
+        // if ( isset( $password ) && $password ) {
+        //     if ( $password == $post['password'] ) return false; // success. permission granted.
+        //     // else return error( -40564, 'wrong-password' );
+        // }
+        // else if ( $post['user_id'] == 'anonymous' ) return error( -40565, 'login-or-input-password' );
+        // else if ( $post['user_id'] != my('id') ) return error( -40567, 'not-your-post' );
+        // return false; // success. this is your post. permission granted.
     }
 
     public function validate_questions( $data, $edit = false ) {
@@ -118,7 +118,7 @@ class post extends Entity {
             // if ( empty( $data['post_id'] ) ) return error( -40201, 'input post_id');
         }
         if ( $edit ) {
-            if ( isset( $data['id'] ) && empty( $data['id'] ) ) return error( -40204, 'input idx');
+            if ( isset( $data['id'] ) && empty( $data['id'] ) ) return error( -40204, 'input id');
         }
         return false;
     }
@@ -181,16 +181,16 @@ class post extends Entity {
      * @todo test.
      * @example call - http://w8.philgo.com/etc/xbase/index.php?idx=1098&password=abc123&mc=post.delete
      */
-    public function delete( $idx = null ) {
+    public function delete( $id = null ) {
         if ( in('mc') ) {
-            $idx = in('idx');
-            if ( empty($idx) ) json_error(-40222, "input-idx");
+            $id = in('id');
+            if ( empty($id) ) json_error(-40222, "input-id");
         }
 
-        $post = $this->get( $idx );
+        $post = $this->get( $id );
         if ( $error = $this->checkPermission( $post, in('password') ) ) json_error($error);
 
-        $re = parent::delete( $idx );
+        $re = parent::delete( $id );
         if ( $re === false ) json_success();
         else json_error( -40223, "post-delete-failed");
     }

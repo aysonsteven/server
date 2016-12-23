@@ -319,19 +319,19 @@ function error( $code, $message ) {
 function get_session_id( $idx_user ) {
     if ( empty($idx_user) ) return null;
     $user = user()->get( $idx_user );
-    $md5 = md5("$user[idx]-$user[id]-$user[email]-$user[password]");
-    return "{$user['idx']}-$md5";
+    $md5 = md5("$user[id]-$user[id]-$user[email]-$user[password]");
+    return "{$user['id']}-$md5";
 }
 
 
 
 function get_session_id_of( $user ) {
-    $md5 = md5("$user[idx]-$user[id]-$user[email]-$user[password]-$user[updated]");
-    return "{$user['idx']}-$md5";
+    $md5 = md5("$user[id]-$user[id]-$user[email]-$user[password]-$user[updated]");
+    return "{$user['id']}-$md5";
 }
 
 function login() {
-    return my('idx');
+    return my('id');
 }
 
 function my( $field = null ) {
