@@ -30,10 +30,9 @@ class User extends Entity {
     public function getRequestedUserData() {
 
         $user = [];
-        if ( in('id') ) $user['id'] = in('id');
+        if ( in('userid') ) $user['userid'] = in('userid');
         if ( in('password') ) $user['password'] = in('password');
         if ( in('email') ) $user['email'] = in('email');
-        if ( in('name') ) $user['name'] = in('name');
 
         return $user;
 
@@ -57,9 +56,9 @@ class User extends Entity {
 
         // for registration, id is required.
         if ( $create ) {
-            if ( ! isset( $user['id'] ) ) return 'input id';
-            if ( $error = validate_id( $user['id'] ) ) return $error;
-            if ( $this->get( $user['id'] ) ) return 'id-exists';
+            if ( ! isset( $user['userid'] ) ) return 'input userid';
+            if ( $error = validate_id( $user['userid'] ) ) return $error;
+            if ( $this->get( $user['userid'] ) ) return 'id-exists';
         }
         // for edit, id must not be submitted.
         else {
@@ -67,8 +66,8 @@ class User extends Entity {
                 dog("ERROR: user::validate_user_data() : id-cannot-be-changed : id: $user[id]");
                 return 'id-cannot-be-changed';
             }
-            $user['id'] = 'unset';
-            unset( $user['id'] );
+            $user['userid'] = 'unset';
+            unset( $user['userid'] );
         }
         // for registration, password is required.
         if ( $create ) {
@@ -119,7 +118,7 @@ class User extends Entity {
 
         $user_idx = $this->create( $this->getRequestedUserData() );
         if ( is_numeric( $user_idx ) ) {
-            json_success( $this->getSessionID( in('id'), in('password')) );
+            json_success( $this->getSessionID( in('userid'), in('password')) );
         }
         else json_error( -500, $user_idx );
     }
@@ -167,7 +166,7 @@ class User extends Entity {
     public function edit() {
         if ( $error = $this->update( $this->getRequestedUserData() ) ) json_error( -50040, $error );
         else {
-            $session_id = get_session_id( my('idx') );
+            $session_id = get_session_id( my('id') );
             // dog("session_id: " . $session_id);
             json_success( $session_id );
         }
@@ -190,7 +189,7 @@ class User extends Entity {
         if ( $error = $this->validate_user_data($user, true) ) return $error;
         $user['updated'] = time();
         if ( isset($user['password']) ) $user['password'] = encrypt_password( $user['password'] );
-        db()->update( 'user', $user, "id='" . my('id') . "'" );
+        db()->update( 'user', $user, "userid='" . my('userid') . "'" );
         return false;
     }
 
@@ -227,7 +226,7 @@ class User extends Entity {
      */
     public function login($id=null, $password=null)
     {
-        if ( empty($id) ) $id = in('id');
+        if ( empty($id) ) $id = in('userid');
         if ( empty($password) ) $password = in('password');
         $re = $this->getSessionID( $id, $password );
         if ( is_array( $re ) ) json_error( $re );

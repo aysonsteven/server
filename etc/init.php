@@ -5,8 +5,8 @@
  * --------------------- Database Connection -----------------------------
  */
 $_sqlite_db = new Database('./var/db/','database.db');
-// $_sqlite_db->query("CREATE TABLE user ( id TEXT , idx INTEGER PRIMARY KEY ,  password TEXT(32), email VARCHAR );");
-// $_sqlite_db->query("CREATE TABLE questions ( id INTEGER PRIMARY KEY , question TEXT , choice1 VARCHAR ,  choice2 VARCHAR, chocie3 VARCHAR, choice4 VARCHAR, answer INTEGER(1), user_id VARCHAR, created VARCHAR, updated VARCHAR );");
+$_sqlite_db->query("CREATE TABLE IF NOT EXISTS user ( id TEXT , idx INTEGER PRIMARY KEY ,  password TEXT(32), email VARCHAR );");
+$_sqlite_db->query("CREATE TABLE IF NOT EXISTS questions ( id INTEGER PRIMARY KEY , question TEXT , choice1 VARCHAR ,  choice2 VARCHAR, choice3 VARCHAR, choice4 VARCHAR, answer INTEGER(1), user_id VARCHAR, timer VARCHAR, created VARCHAR, updated VARCHAR );");
 function db() {
     global $_sqlite_db;
     return $_sqlite_db;
