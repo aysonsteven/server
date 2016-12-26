@@ -108,8 +108,7 @@ class post_test {
         $e = $this->create_post_config('post-test');
         if ( is_string($e) ) test_fail("post_config failed with test: $e");
         $_REQUEST = [
-            'post_id' => 'test',
-            'title' => 'This is post test'
+            'question' => 'This is post test'
         ];
         $re = post()->create();
         if ( is_error( $re ) ) test_fail("post()->create() failed : $re[message]");
@@ -127,8 +126,7 @@ class post_test {
         // write a post.
         $data =[
             'mc' => 'post.write',
-            'post_id' => 'test',
-            'title' => 'for update'
+            'question' => 'for update'
         ];
         $re = http_test( $data );
         if ( is_success($re) ) test_pass("post_test::update() created: idx: $re[data]");
@@ -138,7 +136,7 @@ class post_test {
         // get the post
         $data = [
             'mc'=>'post.get',
-            'idx' => $idx,
+            'id' => $idx,
             'fields'=>'*'
         ];
         $re = http_test( $data );
@@ -149,8 +147,8 @@ class post_test {
         // edit a post
         $data = [
             'mc' => 'post.edit',
-            'idx' => $idx,
-            'title' => 'new title'
+            'id' => $idx,
+      
         ];
         //print_r($data);
         $re = http_test( $data );
@@ -160,7 +158,7 @@ class post_test {
         // get edited post
         $data = [
             'mc'=>'post.get',
-            'idx' => $idx,
+            'id' => $idx,
             'fields'=>'*'
         ];
         $re = http_test( $data );
@@ -169,7 +167,7 @@ class post_test {
         $after = $re['data'];
 
         // compare before and after.
-        if ( $before['title'] == $after['title'] ) test_fail("post has not updated.");
+        if ( $before['question'] == $after['question'] ) test_fail("post has not updated.");
         else test_pass("post edited: before: '$before[title]', after: '$after[title]'");
 
     }
@@ -178,11 +176,9 @@ class post_test {
     public function delete()
     {
 
-        // write a post.
         $data =[
             'mc' => 'post.write',
-            'post_id' => 'test',
-            'title' => 'post-delete-test: ' . time()
+            'question' => 'post-delete-test: ' . time()
         ];
         $re = http_test( $data );
         if ( is_success($re) ) test_pass("post_test::delete() created: idx: $re[data]");
@@ -196,11 +192,11 @@ class post_test {
 
 
 
-        // delete the post
+
 
         $data =[
             'mc' => 'post.delete',
-            'idx' => $idx
+            'id' => $idx
         ];
         $re = http_test( $data );
         if ( is_success($re) ) test_pass("post_test::delete() deleted");
@@ -219,10 +215,10 @@ class post_test {
 
         $title = "Hello World Test: ";
 
-        // create 100 posts.
+
         $data = ['mc' => 'post.search'];
         $data['options'] = [
-            'cond' => "title LIKE '%$title%'",
+            'cond' => "question LIKE '%$title%'",
             'limit' => 1
         ];
         $re = http_test( $data );
@@ -231,10 +227,9 @@ class post_test {
         }
         else {
             $post = [];
-            $post['post_id'] = 'test';
             $post['mc'] = 'post.write';
             for( $i = 0; $i < 100; $i ++ ) {
-                $post['title'] = $title . $i;
+                $post['question'] = $title . $i;
                 $re = http_test( $post );
                 if ( is_success( $re ) ) echo ".";
                 else {
@@ -244,27 +239,22 @@ class post_test {
             echo "\n";
         }
 
-        // search users. total count 100. count 100.
+
         $data = ['mc' => 'post.search'];
         $data['options'] = [
-            'cond' => "title LIKE '%$title%'",
+            'cond' => "question LIKE '%$title%'",
             'limit' => 999
         ];
         $re = http_test( $data );
         if ( is_success( $re ) ) test_pass( "post search total count: {$re['data']['total_count']} searched: count: {$re['data']['count']}. It is only 100 since the number posts are only 100.");
         else test_fail("search failed: $re[message]");
 
-        // count 33
         $data['options']['limit'] = 33;
-        //print_r($data);
         $re = http_test( $data );
-        //echo "re:\n";
-        //print_r( $re['data']);
         if ( is_success( $re ) ) test_pass( "post search total count: {$re['data']['total_count']} searched: count: {$re['data']['count']}");
         else test_fail("search failed: $re[message]");
 
 
-        // get 4th page. total count should be 100, searched count should be 1.
         $data['options']['page'] = 4;
         $re = http_test( $data );
         if ( is_success( $re ) ) test_pass( "post search total count: {$re['data']['total_count']} searched: count: {$re['data']['count']}");

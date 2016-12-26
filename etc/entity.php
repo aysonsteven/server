@@ -59,7 +59,7 @@ class Entity {
     public function get( $idx = null, $fields = '*', $field = null ) {
         $restful = false;
         if ( $idx === null ) { /// @attention if $idx is null, then it is Restful Query
-            $idx = in('id') ? in('id') : in('id');
+            $id = in('id') ? in('id') : in('id');
             if ( $idx ) {
                 $restful = true;
                 $fields = in('fields', '*');
@@ -70,8 +70,8 @@ class Entity {
             }
         }
         if ( $field !== null ) {            /// @ATTENTION $field can be set only programmatically
-            $id = db()->escape( $idx );
-            $row = db()->get_row( "SELECT $fields FROM {$this->table} WHERE $field='$id'", ARRAY_A);
+            $idx = db()->escape( $idx );
+            $row = db()->get_row( "SELECT $fields FROM {$this->table} WHERE $field='$idx'", ARRAY_A);
         }
         else if ( is_numeric( $idx ) ) $row = db()->get_row( "SELECT $fields FROM {$this->table} WHERE id=$idx", ARRAY_A);
         else {
@@ -182,14 +182,14 @@ class Entity {
     {
         if ( $idx === null ) die("Entity::delete() called with null $idx");
         if ( is_numeric( $idx ) ) {
-            $idx = db()->get_var("SELECT idx FROM {$this->table} WHERE idx='$idx'");
+            $idx = db()->get_var("SELECT id FROM {$this->table} WHERE id='$idx'");
         }
         else {
             $id = db()->escape( $idx );
-            $idx = db()->get_var( "SELECT idx FROM {$this->table} WHERE id='$id'");
+            $idx = db()->get_var( "SELECT id FROM {$this->table} WHERE id='$id'");
         }
         if ( empty($idx) ) return 'record-not-exist';
-        db()->query("DELETE FROM {$this->table} WHERE idx='$idx'");
+        db()->query("DELETE FROM {$this->table} WHERE id='$idx'");
         return false;
     }
 }
