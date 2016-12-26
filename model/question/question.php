@@ -79,7 +79,7 @@ class question extends Entity {
         if ( ! isset($data['id']) ) return error( -40564, 'input-id');
         $post = $this->get( $data['id'] );
 
-        if ( $error = $this->checkPermission( $post, $data['password'] ) ) return $error;
+        // if ( $error = $this->checkPermission( $post, $data['password'] ) ) return $error;
         db()->update( $this->getTable(), $data, "id=$data[id]");
 
         return false;
