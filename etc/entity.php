@@ -59,7 +59,7 @@ class Entity {
     public function get( $idx = null, $fields = '*', $field = null ) {
         $restful = false;
         if ( $idx === null ) { /// @attention if $idx is null, then it is Restful Query
-            $id = in('id') ? in('id') : in('id');
+            $idx = in('id') ? in('id') : in('id');
             if ( $idx ) {
                 $restful = true;
                 $fields = in('fields', '*');

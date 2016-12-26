@@ -6,7 +6,7 @@ class User extends Entity {
     {
         parent::__construct();
         $this->setTable( 'user' );
-        $this->setSearchableFields('idx,id,name,nickname');
+        $this->setSearchableFields('userid,id');
     }
     /**
      *
@@ -190,7 +190,7 @@ class User extends Entity {
         if ( $error = $this->validate_user_data($user, true) ) return $error;
         $user['updated'] = time();
         if ( isset($user['password']) ) $user['password'] = encrypt_password( $user['password'] );
-        db()->update( 'user', $user, "idx='" . my('idx') . "'" );
+        db()->update( 'user', $user, "id='" . my('id') . "'" );
         return false;
     }
 
@@ -296,7 +296,7 @@ class User extends Entity {
      */
     public function get( $idx = null, $fields = '*', $field = null ) {
         if ( $idx === null ) {
-            $_REQUEST['fields'] = "idx, id, email, created, name, nickname, country, province, city";
+            $_REQUEST['fields'] = "id, userid, email";
             parent::get();
         }
         return parent::get( $idx, $fields );
