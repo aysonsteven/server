@@ -17,8 +17,8 @@ class Database extends ezSQL_sqlite3 {
             json_error( -1122, 'DATABASE WARNING: ' . $warning);
         }
         if ( $this->captured_errors ) {
-            foreach ( $this->captured_errors as $err ) {
-                json_error( -1120, "$err[error_str] - $err[query]");
+            foreach ( $this->captured_errors as $e ) {
+                json_error( -1120, "$e[error_str] - $e[query]");
             }
         }
         return $re;

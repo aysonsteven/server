@@ -2,6 +2,6 @@
 
 class Index {
     public function index() {
-        json_success();
+        json_success( [ 'data' => 'Welcome to xbase', 'stamp' => time() ]);
     }
 }

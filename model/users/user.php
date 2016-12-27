@@ -6,7 +6,7 @@ class User extends Entity {
     {
         parent::__construct();
         $this->setTable( 'user' );
-        $this->setSearchableFields('userid,id');
+        $this->setSearchableFields('idx,id,email');
     }
     /**
      *
@@ -30,7 +30,7 @@ class User extends Entity {
     public function getRequestedUserData() {
 
         $user = [];
-        if ( in('userid') ) $user['userid'] = in('userid');
+        if ( in('id') ) $user['id'] = in('id');
         if ( in('password') ) $user['password'] = in('password');
         if ( in('email') ) $user['email'] = in('email');
 
@@ -56,9 +56,9 @@ class User extends Entity {
 
         // for registration, id is required.
         if ( $create ) {
-            if ( ! isset( $user['userid'] ) ) return 'input userid';
-            if ( $error = validate_id( $user['userid'] ) ) return $error;
-            if ( $this->get( $user['userid'] ) ) return 'id-exists';
+            if ( ! isset( $user['id'] ) ) return 'input id';
+            if ( $error = validate_id( $user['id'] ) ) return $error;
+            if ( $this->get( $user['id'] ) ) return 'id-exists';
         }
         // for edit, id must not be submitted.
         else {
@@ -66,8 +66,8 @@ class User extends Entity {
                 dog("ERROR: user::validate_user_data() : id-cannot-be-changed : id: $user[id]");
                 return 'id-cannot-be-changed';
             }
-            $user['userid'] = 'unset';
-            unset( $user['userid'] );
+            $user['id'] = 'unset';
+            unset( $user['id'] );
         }
         // for registration, password is required.
         if ( $create ) {
@@ -118,7 +118,7 @@ class User extends Entity {
 
         $user_idx = $this->create( $this->getRequestedUserData() );
         if ( is_numeric( $user_idx ) ) {
-            json_success( $this->getSessionID( in('userid'), in('password')) );
+            json_success( $this->getSessionID( in('id'), in('password')) );
         }
         else json_error( -500, $user_idx );
     }
@@ -166,7 +166,7 @@ class User extends Entity {
     public function edit() {
         if ( $error = $this->update( $this->getRequestedUserData() ) ) json_error( -50040, $error );
         else {
-            $session_id = get_session_id( my('id') );
+            $session_id = get_session_id( my('idx') );
             // dog("session_id: " . $session_id);
             json_success( $session_id );
         }
@@ -189,7 +189,7 @@ class User extends Entity {
         if ( $error = $this->validate_user_data($user, true) ) return $error;
         $user['updated'] = time();
         if ( isset($user['password']) ) $user['password'] = encrypt_password( $user['password'] );
-        db()->update( 'user', $user, "userid='" . my('userid') . "'" );
+        db()->update( 'user', $user, "idx='" . my('idx') . "'" );
         return false;
     }
 
@@ -226,7 +226,7 @@ class User extends Entity {
      */
     public function login($id=null, $password=null)
     {
-        if ( empty($id) ) $id = in('userid');
+        if ( empty($id) ) $id = in('id');
         if ( empty($password) ) $password = in('password');
         $re = $this->getSessionID( $id, $password );
         if ( is_array( $re ) ) json_error( $re );
@@ -254,7 +254,7 @@ class User extends Entity {
         $user = $this->get( $id );
         if ( empty($user) ) return error(-20070, 'user-not-exist');
         if ( $user['password'] != encrypt_password( $password ) ) return error( -20071, 'wrong-password');
-        return get_session_id( $user['id'] );
+        return get_session_id( $user['idx'] );
     }
 
     /**
@@ -295,7 +295,7 @@ class User extends Entity {
      */
     public function get( $idx = null, $fields = '*', $field = null ) {
         if ( $idx === null ) {
-            $_REQUEST['fields'] = "id, userid, email";
+            $_REQUEST['fields'] = "idx, id, email, created, name, nickname, country, province, city";
             parent::get();
         }
         return parent::get( $idx, $fields );
