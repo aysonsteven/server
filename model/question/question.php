@@ -72,7 +72,7 @@ class question extends Entity {
     {
         $data = $this->getRequestPostData();
         if ( $error = $this->validate_post_data( $data, true ) ) return $error;
-        // $data['user_id'] = my('id'); // for admin edit.
+        $data['user_id'] = my('id'); // for admin edit.
         $data['updated'] = time();
         if ( ! isset($data['idx']) ) return error( -40564, 'input-idx');
         $post = $this->get( $data['idx'] );
@@ -92,7 +92,7 @@ class question extends Entity {
             // else return error( -40564, 'wrong-password' );
         }
         else if ( $post['user_id'] == 'anonymous' ) return error( -40565, 'login-or-input-password' );
-        else if ( $post['user_id'] != my('id') ) return error( -40567, 'not-your-post' );
+        // else if ( $post['user_id'] != my('id') ) return error( -40567, 'not-your-post' );
         return false; // success. this is your post. permission granted.
     }
 
