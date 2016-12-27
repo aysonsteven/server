@@ -6,7 +6,7 @@ class question extends Entity {
     public function __construct()
     {
         parent::__construct();
-        $this->setTable( 'post_data' );
+        $this->setTable( 'questions' );
         $this->setSearchableFields('idx,question, choice1,choice2,choice3,choice4,answer');
 
 
@@ -51,12 +51,10 @@ class question extends Entity {
     public function create() {
         $data = $this->getRequestPostData();
         if ( $error = $this->validate_post_data( $data ) ) return $error;
-        $config = post_config()->get( $data['post_id'] );
-        if ( empty($config) ) return error(-40104, 'post-config-does-not-exist');
         $data['user_id'] = my('id');
         $data['created'] = time();
         $data['updated'] = time();
-        $idx = db()->insert('post_data', $data);
+        $idx = db()->insert('questions', $data);
 
         if ( $idx ) return $idx;
         else return error(-40100, 'failed-to-post-create');
@@ -114,8 +112,7 @@ class question extends Entity {
     public function validate_post_data( $data, $edit = false ) {
         $create = ! $edit;
         if ( $create ) {
-            if ( empty( $data['title'] ) ) return error( -40200, 'input title');
-            if ( empty( $data['post_id'] ) ) return error( -40201, 'input post_id');
+            if ( empty( $data['question'] ) ) return error( -40200, 'input title');
         }
         if ( $edit ) {
             if ( isset( $data['idx'] ) && empty( $data['idx'] ) ) return error( -40204, 'input idx');
@@ -126,21 +123,14 @@ class question extends Entity {
     private function getRequestPostData()
     {
         $data = [];
+        if ( in('choice1') ) $data['choice1'] = in('choice1');
+        if ( in('choice2') ) $data['choice2'] = in('choice2');
+        if ( in('choice3') ) $data['choice3'] = in('choice3');
+        if ( in('choice4') ) $data['choice4'] = in('choice4');
+        if ( in('answer') ) $data['answer'] = in('answer');
+        if ( in('timer') ) $data['timer'] = in('timer');
+        
 
-        /*
-        if ( in('idx') ) $data['idx'] = in('idx');
-        if ( in('post_id') ) $data['post_id'] = in('post_id');
-        if ( in('password') ) $data['password'] = in('password');
-        if ( in('title') ) $data['title'] = in('title');
-        if ( in('content') ) $data['content'] = in('content');
-
-        if ( in('email') ) $data['email'] = in('email');
-        if ( in('first_name') ) $data['first_name'] = in('first_name');
-        if ( in('middle_name') ) $data['middle_name'] = in('middle_name');
-        if ( in('last_name') ) $data['last_name'] = in('last_name');
-        if ( in('gender') ) $data['gender'] = in('gender');
-        if ( in('birth_year') ) $data['birth_year'] = in('birth_year');
-        */
 
         $names = [ 'idx', 'id', 'password', 'question',
             'email'
